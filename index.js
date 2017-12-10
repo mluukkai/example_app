@@ -33,6 +33,7 @@ const index = `
 <body>
   <div class='container'>
     <h1>Full stack -esimerkkisovellus</h1>
+    <p>muistiinpanoja luotu ${notes.length} kappaletta</p>
     <a href='/notes'>muistiinpanot</a>
     <img src='kuva.png' width='200'/>
   </div>
