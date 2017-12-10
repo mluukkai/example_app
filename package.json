@@ -1,0 +1,23 @@
+{
+  "name": "example_app",
+  "version": "1.0.0",
+  "description": "esimerkkisovellus Full stack -kurssille",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mluukkai/example_app.git"
+  },
+  "author": "Matti Luukkainen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mluukkai/example_app/issues"
+  },
+  "homepage": "https://github.com/mluukkai/example_app#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2"
+  }
+}
