@@ -25,22 +25,6 @@ const notes = [
 
 ]
 
-const index = `
-<!DOCTYPE html>
-<html>
-<head>
-</head>
-<body>
-  <div class='container'>
-    <h1>Full stack -esimerkkisovellus</h1>
-    <p>muistiinpanoja luotu ${notes.length} kappaletta</p>
-    <a href='/notes'>muistiinpanot</a>
-    <img src='kuva.png' width='200'/>
-  </div>
-</body>
-</html>
-`
-
 const notes_page = `
 <!DOCTYPE html>
 <html>
@@ -53,7 +37,7 @@ const notes_page = `
     <h1>Muistiinpanot</h1>
     <div id='notes'>
     </div>
-    <form action='/notes' method='POST'>
+    <form action='/new_note' method='POST'>
       <input type="text" name="note"><br>
       <input type="submit" value="Talleta">
     </form>
@@ -62,8 +46,27 @@ const notes_page = `
 </html>
 `
 
+const getFronPageHtml = (noteCount) => {
+  return(`
+<!DOCTYPE html>
+    <html>
+      <head>
+      </head>
+      <body>
+        <div class='container'>
+          <h1>Full stack -esimerkkisovellus</h1>
+          <p>muistiinpanoja luotu ${noteCount} kappaletta</p>
+          <a href='/notes'>muistiinpanot</a>
+          <img src='kuva.png' width='200' />
+        </div>
+      </body>
+    </html>
+`)
+} 
+
 app.get('/', (req, res) => {
-  res.send(index)
+  const page = getFronPageHtml(notes.length)
+  res.send(page)
 })
 
 app.get('/notes', (req, res) => {
@@ -74,7 +77,7 @@ app.get('/data.json', (req, res) => {
   res.json(notes)
 })
 
-app.post('/notes', (req, res) => {
+app.post('/new_note', (req, res) => {
   notes.push( { 
     content: req.body.note,
     date: new Date()
