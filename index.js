@@ -46,6 +46,27 @@ const notes_page = `
 </html>
 `
 
+const notes_spa = `
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="/main.css" />
+  <script type="text/javascript" src="spa.js"></script>
+</head>
+<body>
+  <div class='container'>
+    <h1>Muistiinpanot -- single page app</h1>
+    <div id='notes'>
+    </div>
+    <form id='notes_form'>
+      <input type="text" name="note"><br>
+      <input type="submit" value="Talleta">
+    </form>
+  </div>
+</body>
+</html>
+`
+
 const getFronPageHtml = (noteCount) => {
   return(`
 <!DOCTYPE html>
@@ -73,8 +94,17 @@ app.get('/notes', (req, res) => {
   res.send(notes_page)
 })
 
+app.get('/spa', (req, res) => {
+  res.send(notes_spa)
+})
+
 app.get('/data.json', (req, res) => {
   res.json(notes)
+})
+
+app.post('/new_note_spa', (req, res) => {
+  notes.push(req.body)
+  res.status(201).send({ message: 'note created'})
 })
 
 app.post('/new_note', (req, res) => {
@@ -82,7 +112,8 @@ app.post('/new_note', (req, res) => {
     content: req.body.note,
     date: new Date()
   })
-  return res.redirect('/notes')
+  
+  res.redirect('/notes')
 })
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`))
