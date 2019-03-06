@@ -67,7 +67,7 @@ const notes_spa = `
 </html>
 `
 
-const getFronPageHtml = (noteCount) => {
+const getFrontPageHtml = (noteCount) => {
   return(`
 <!DOCTYPE html>
     <html>
@@ -86,7 +86,7 @@ const getFronPageHtml = (noteCount) => {
 } 
 
 app.get('/', (req, res) => {
-  const page = getFronPageHtml(notes.length)
+  const page = getFrontPageHtml(notes.length)
   res.send(page)
 })
 
