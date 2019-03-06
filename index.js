@@ -1,6 +1,8 @@
 const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
+const cookieSession = require('cookie-session')
+const crypto = require('crypto')
 
 const PORT = process.env.PORT || 5000
 
@@ -8,6 +10,16 @@ const app = express()
 
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(bodyParser())
+app.use(cookieSession({
+  name: "tietovarasto",
+  secret: crypto.randomBytes(256)
+}))
+app.use((req, res, next) => {
+  if (req.session.isNew) {
+    req.session.notes = []
+  }
+  next()
+})
 
 const notes = [
   {
@@ -22,7 +34,6 @@ const notes = [
     content: 'HTTP-protokollan tärkeimmät metodit ovat GET ja POST',
     date: '2017-12-10T19:20:14.298Z'
   },
-
 ]
 
 const notes_page = `
@@ -86,7 +97,7 @@ const getFrontPageHtml = (noteCount) => {
 } 
 
 app.get('/', (req, res) => {
-  const page = getFrontPageHtml(notes.length)
+  const page = getFrontPageHtml(notes.length + req.session.notes.length)
   res.send(page)
 })
 
@@ -99,20 +110,19 @@ app.get('/spa', (req, res) => {
 })
 
 app.get('/data.json', (req, res) => {
-  res.json(notes)
+  res.json(notes.concat(req.session.notes))
 })
 
 app.post('/new_note_spa', (req, res) => {
-  notes.push(req.body)
+  req.session.notes.push(req.body)
   res.status(201).send({ message: 'note created'})
 })
 
 app.post('/new_note', (req, res) => {
-  notes.push( { 
+  req.session.notes.push({
     content: req.body.note,
     date: new Date()
   })
-  
   res.redirect('/notes')
 })
 
