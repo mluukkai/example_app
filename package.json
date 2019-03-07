@@ -18,6 +18,7 @@
   "homepage": "https://github.com/mluukkai/example_app#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
+    "cookie-parser": "^1.4.4",
     "express": "^4.16.2",
     "lru-cache": "^5.1.1"
   },
