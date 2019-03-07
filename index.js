@@ -1,6 +1,9 @@
 const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
+const LRU = require('lru-cache')
+const crypto = require('crypto')
 
 const PORT = process.env.PORT || 5000
 
@@ -8,6 +11,7 @@ const app = express()
 
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(bodyParser())
+app.use(cookieParser())
 
 const notes = [
   {
@@ -22,8 +26,29 @@ const notes = [
     content: 'HTTP-protokollan tärkeimmät metodit ovat GET ja POST',
     date: '2017-12-10T19:20:14.298Z'
   },
-
 ]
+
+const userNotesStorage = new LRU({
+  max: 50 * 1024 * 1024, // 50 mb content & dates
+  length: (notes) => notes.reduce((acc, x) => acc + x.content.length + 8, 0),
+  updateAgeOnGet: true
+})
+
+app.use((req, res, next) => {
+  let userid = req.cookies.userid
+  if (!userid) {
+    userid = crypto.randomBytes(32).toString('hex')
+    res.cookie('userid', userid)
+  }
+  req.userNotes = userNotesStorage.get(userid) || []
+  const origLen = req.userNotes.length
+
+  next()
+
+  if (origLen !== req.userNotes.length) {
+    userNotesStorage.set(userid, req.userNotes)
+  }
+})
 
 const notes_page = `
 <!DOCTYPE html>
@@ -86,7 +111,7 @@ const getFrontPageHtml = (noteCount) => {
 } 
 
 app.get('/', (req, res) => {
-  const page = getFrontPageHtml(notes.length)
+  const page = getFrontPageHtml(notes.length + req.userNotes.length)
   res.send(page)
 })
 
@@ -99,16 +124,16 @@ app.get('/spa', (req, res) => {
 })
 
 app.get('/data.json', (req, res) => {
-  res.json(notes)
+  res.json(notes.concat(req.userNotes))
 })
 
 app.post('/new_note_spa', (req, res) => {
-  notes.push(req.body)
+  req.userNotes.push(req.body)
   res.status(201).send({ message: 'note created'})
 })
 
 app.post('/new_note', (req, res) => {
-  notes.push( { 
+  req.userNotes.push( {
     content: req.body.note,
     date: new Date()
   })
