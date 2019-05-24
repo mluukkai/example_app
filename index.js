@@ -11,16 +11,16 @@ app.use(bodyParser())
 
 const notes = [
   {
-    content: 'HTML on helppoa',
-    date: '2017-12-10T17:30:31.098Z'
+    content: 'HTML is easy',
+    date: '2019-05-23T17:30:31.098Z'
   },
   {
-    content: 'Selain pystyy suorittamaan vain javascriptiä',
-    date: '2017-12-10T18:39:34.091Z'
+    content: 'Browser can execute only Javascript',
+    date: '2019-05-23T18:39:34.091Z'
   },
   {
-    content: 'HTTP-protokollan tärkeimmät metodit ovat GET ja POST',
-    date: '2017-12-10T19:20:14.298Z'
+    content: 'Most important methods of HTTP-protocol are GET and POST',
+    date: '2019-05-23T19:20:14.298Z'
   },
 
 ]
@@ -34,12 +34,12 @@ const notes_page = `
 </head>
 <body>
   <div class='container'>
-    <h1>Muistiinpanot</h1>
+    <h1>Notes</h1>
     <div id='notes'>
     </div>
     <form action='/new_note' method='POST'>
       <input type="text" name="note"><br>
-      <input type="submit" value="Talleta">
+      <input type="submit" value="Save">
     </form>
   </div>
 </body>
@@ -55,12 +55,12 @@ const notes_spa = `
 </head>
 <body>
   <div class='container'>
-    <h1>Muistiinpanot -- single page app</h1>
+    <h1>Notes -- single page app</h1>
     <div id='notes'>
     </div>
     <form id='notes_form'>
       <input type="text" name="note"><br>
-      <input type="submit" value="Talleta">
+      <input type="submit" value="Save">
     </form>
   </div>
 </body>
@@ -75,9 +75,9 @@ const getFronPageHtml = (noteCount) => {
       </head>
       <body>
         <div class='container'>
-          <h1>Full stack -esimerkkisovellus</h1>
-          <p>muistiinpanoja luotu ${noteCount} kappaletta</p>
-          <a href='/notes'>muistiinpanot</a>
+          <h1>Full stack exampe app</h1>
+          <p>number of notes created ${noteCount}</p>
+          <a href='/notes'>notes</a>
           <img src='kuva.png' width='200' />
         </div>
       </body>
@@ -88,6 +88,11 @@ const getFronPageHtml = (noteCount) => {
 app.get('/', (req, res) => {
   const page = getFronPageHtml(notes.length)
   res.send(page)
+})
+
+app.get('/reset', (req, res) => {
+  notes.splice(0, notes.length)
+  res.status(201).send({ message: 'notes reset' })
 })
 
 app.get('/notes', (req, res) => {
