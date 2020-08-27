@@ -4,10 +4,10 @@ const boyParser = require('body-parser')
 
 const PORT = process.env.PORT || 5000
 const MAX_NOTES = 200;
+const PATH_PREFIX = '/exampleapp';
 
 const app = express()
 
-app.use(express.static(path.join(__dirname, 'public')))
 app.use(boyParser())
 
 const notes = [
@@ -48,15 +48,15 @@ const notes_page = `
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" type="text/css" href="/main.css" />
-  <script type="text/javascript" src="main.js"></script>
+  <link rel="stylesheet" type="text/css" href="${PATH_PREFIX}/main.css" />
+  <script type="text/javascript" src="${PATH_PREFIX}/main.js"></script>
 </head>
 <body>
   <div class='container'>
     <h1>Notes</h1>
     <div id='notes'>
     </div>
-    <form action='/new_note' method='POST'>
+    <form action='${PATH_PREFIX}/new_note' method='POST'>
       <input type="text" name="note"><br>
       <input type="submit" value="Save">
     </form>
@@ -69,8 +69,8 @@ const notes_spa = `
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" type="text/css" href="/main.css" />
-  <script type="text/javascript" src="spa.js"></script>
+  <link rel="stylesheet" type="text/css" href="${PATH_PREFIX}/main.css" />
+  <script type="text/javascript" src="${PATH_PREFIX}/spa.js"></script>
 </head>
 <body>
   <div class='container'>
@@ -94,9 +94,9 @@ const getFronPageHtml = (noteCount) => {
       </head>
       <body>
         <div class='container'>
-          <h1>Full stack exampe app</h1>
+          <h1>Full stack example app</h1>
           <p>number of notes created ${noteCount}</p>
-          <a href='/notes'>notes</a>
+          <a href='${PATH_PREFIX}/notes'>notes</a>
           <img src='kuva.png' width='200' />
         </div>
       </body>
@@ -104,29 +104,33 @@ const getFronPageHtml = (noteCount) => {
 `)
 } 
 
-app.get('/', (req, res) => {
+const router = express.Router();
+
+router.use(express.static(path.join(__dirname, 'public')))
+
+router.get('/', (req, res) => {
   const page = getFronPageHtml(notes.length)
   res.send(page)
 })
 
-app.get('/reset', (req, res) => {
+router.get('/reset', (req, res) => {
   notes.splice(0, notes.length)
   res.status(201).send({ message: 'notes reset' })
 })
 
-app.get('/notes', (req, res) => {
+router.get('/notes', (req, res) => {
   res.send(notes_page)
 })
 
-app.get('/spa', (req, res) => {
+router.get('/spa', (req, res) => {
   res.send(notes_spa)
 })
 
-app.get('/data.json', (req, res) => {
+router.get('/data.json', (req, res) => {
   res.json(notes)
 })
 
-app.post('/new_note_spa', (req, res) => {
+router.post('/new_note_spa', (req, res) => {
   if (!isValidNote(req.body)) {
     return res.send('invalid note').status(400)
   }
@@ -136,7 +140,7 @@ app.post('/new_note_spa', (req, res) => {
   res.status(201).send({ message: 'note created' })
 })
 
-app.post('/new_note', (req, res) => {
+router.post('/new_note', (req, res) => {
   if (typeof req.body.note === 'string') {
     createNote(formatNote({
       content: req.body.note,
@@ -144,7 +148,13 @@ app.post('/new_note', (req, res) => {
     }))
   }
   
-  res.redirect('/notes')
+  res.redirect(`${PATH_PREFIX}/notes`)
 })
+
+if (process.env.NODE_ENV === 'development') {
+  app.use(PATH_PREFIX, router)
+} else {
+  app.use('/', router)
+}
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`))

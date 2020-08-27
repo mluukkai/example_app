@@ -4,7 +4,8 @@
   "description": "esimerkkisovellus Full stack -kurssille",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "NODE_ENV=development node index.js"
   },
   "repository": {
     "type": "git",

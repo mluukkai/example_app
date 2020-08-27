@@ -27,7 +27,7 @@ xhttp.onreadystatechange = function () {
   }
 }
 
-xhttp.open("GET", "/data.json", true)
+xhttp.open("GET", "/exampleapp/data.json", true)
 xhttp.send()
 
 var sendToServer = function (note) {
@@ -38,7 +38,7 @@ var sendToServer = function (note) {
     }
   }
 
-  xhttpForPost.open("POST", '/new_note_spa', true)
+  xhttpForPost.open("POST", '/exampleapp/new_note_spa', true)
   xhttpForPost.setRequestHeader("Content-type", "application/json")
   xhttpForPost.send(JSON.stringify(note));
 }
