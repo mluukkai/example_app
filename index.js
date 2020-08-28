@@ -3,7 +3,7 @@ const path = require('path')
 const boyParser = require('body-parser')
 
 const PORT = process.env.PORT || 5000
-const MAX_NOTES = 200;
+const MAX_NOTES = 100;
 const PATH_PREFIX = '/exampleapp';
 
 const app = express()
@@ -39,7 +39,7 @@ const createNote = note => {
 
 const formatNote = note => {
   return {
-    content: note.content.substring(0, 500),
+    content: note.content.substring(0, 200),
     date: new Date(note.date),
   }
 }
