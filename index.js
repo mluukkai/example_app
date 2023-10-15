@@ -1,6 +1,6 @@
 const express = require('express')
 const path = require('path')
-const boyParser = require('body-parser')
+const bodyParser = require('body-parser')
 
 const PORT = process.env.PORT || 5000
 const MAX_NOTES = 100;
@@ -8,7 +8,7 @@ const PATH_PREFIX = '/exampleapp';
 
 const app = express()
 
-app.use(boyParser())
+app.use(bodyParser())
 
 const notes = [
   {
@@ -86,7 +86,7 @@ const notes_spa = `
 </html>
 `
 
-const getFronPageHtml = (noteCount) => {
+const getFrontPageHtml = (noteCount) => {
   return(`
 <!DOCTYPE html>
     <html>
@@ -109,7 +109,7 @@ const router = express.Router();
 router.use(express.static(path.join(__dirname, 'public')))
 
 router.get('/', (req, res) => {
-  const page = getFronPageHtml(notes.length)
+  const page = getFrontPageHtml(notes.length)
   res.send(page)
 })
 
