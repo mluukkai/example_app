@@ -86,7 +86,7 @@ const notes_spa = `
 </html>
 `
 
-const getFronPageHtml = (noteCount) => {
+const getFrontPageHtml = (noteCount) => {
   return(`
 <!DOCTYPE html>
     <html>
@@ -109,7 +109,7 @@ const router = express.Router();
 router.use(express.static(path.join(__dirname, 'public')))
 
 router.get('/', (req, res) => {
-  const page = getFronPageHtml(notes.length)
+  const page = getFrontPageHtml(notes.length)
   res.send(page)
 })
 
